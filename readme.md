@@ -85,3 +85,28 @@ utils.getWinner.mockImplementation((p1, p2) => p1) // 这里用于替代utils.ge
 // testing...
 utils.getWinner.mockrestore()
 ```
+
+### implement `spyOn`
+
+```js
+function spyOn(obj, prop) {
+    const originVal = obj[prop]
+    obj[prop] = fn()
+    obj[prop].mockRestore = () => {
+        obj[prop] = originVal
+    }
+}
+```
+首先，`spyOn`需要在内部声明一个变量用于保存原始值；其次，被'spy'的函数需要能够保存调用信息，因此我们使用之前实现的`fn`函数来生成；最后，需要增加`mockRestore`方法，即将函数恢复成原来的值。
+
+对于之前实现的`fn`函数也要做一定修改：
+1. `fn`支持默认参数，默认为一个空函数
+2. 所有`fn`生成函数应该有一个`mockImplementation`方法，用于给函数赋值一个新的mock实现
+
+```js
+function fn(impl = () => {}) {
+    // ... previous code
+    mockFn.mockImplementation = newImpl => impl = newImpl
+    return mockFn
+}
+```
