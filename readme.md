@@ -156,3 +156,18 @@ utils.getWinner.mockReset()
 console.log(require('./utils')) // 真正的utilsmodule，不受mock影响
 ```
 在jest测试用例中，我们并没有把mock操作放在require操作之前。这是因为jest runner在运行时会帮我们做这一步骤。
+
+## external mock
+对于同一个模块来说，通常不同的测试需要的是想通的mock实现。如果不希望在每个测试用例里面都写一遍mock实现，可以通过在被测模块同级目录下创建一个`__mocks__`目录，然后再其中创建相同名字的文件，在文件中直接导出要mock的内容。
+
+在当前代码中即是创建`src/__mocks__/utils.js`，然后再其中写入：
+```js
+module.exports = {
+    getWinner: jest.fn((p1, p2) => p1)
+}
+```
+然后再测试用力中，直接使用
+```js
+jest.mock('../utils')
+```
+即可。

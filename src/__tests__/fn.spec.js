@@ -1,9 +1,7 @@
 const thumbwar = require('../thumbwar')
 const utils = require('../utils')
 
-jest.mock('../utils.js', () => ({
-    getWinner: jest.fn((p1, p2) => p1)
-}))
+jest.mock('../utils.js')
 
 test('get winner', () => {
     const winner = thumbwar('player1', 'player2')
