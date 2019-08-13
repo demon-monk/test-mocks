@@ -56,3 +56,23 @@ expect(utils.getWinner.mock.calls).toEqual([             ["player1", "player2"],
 ])
 // code after
 ```
+
+### implement `jest.fn`
+通过上面描述我们知道了jest中记录调用信息的原理，因此我们可以实现自己的`fn`。
+```js
+function fn(impl) {
+    const mockFn = (...args) => {
+        mockFn.mock.calls.push(args)
+        return impl(...args)
+    }
+    mockFn.mock = { calls: [] }
+    return mockFn
+}
+// code before
+utils.getWinner = fn((p1, p2) => p1)
+thumbwar('player1', 'player2')
+assert.deepStrictEqual(utils.getWinner.mock.calls, [     ["player1", "player2"], 
+    ["player1", "player2"]
+])
+//code after
+```
