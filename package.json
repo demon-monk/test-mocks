@@ -1,0 +1,13 @@
+{
+  "name": "test-mocks",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "demon-monk <antdude@126.com>",
+  "license": "MIT",
+  "scripts": {
+    "test": "jest"
+  },
+  "devDependencies": {
+    "jest": "^24.8.0"
+  }
+}
