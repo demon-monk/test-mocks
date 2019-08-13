@@ -76,3 +76,12 @@ assert.deepStrictEqual(utils.getWinner.mock.calls, [     ["player1", "player2"],
 ])
 //code after
 ```
+
+## `jest.spyOn`
+在前面的测试用例中，我们必须要在测试前保存mock函数的原始实现，并在测试结束后手动恢复。这非常不方便，并且容易忘记。jest提供了`spyOn`方法。被'spy'过的函数可以通过`mockRestore`方法进行恢复，而不需要你声明一个变量去保存恢复。被'spy'的函数通过`mockImplementation`方法来mock任意的函数。
+```js
+jest.spyOn(utils, 'getWinner')
+utils.getWinner.mockImplementation((p1, p2) => p1) // 这里用于替代utils.getWinner = jest.fn((p1, p2) => p1)
+// testing...
+utils.getWinner.mockrestore()
+```

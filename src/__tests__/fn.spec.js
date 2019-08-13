@@ -2,8 +2,8 @@ const thumbwar = require('../thumbwar')
 const utils = require('../utils')
 
 test('get winner', () => {
-    const originGetWinner = utils.getWinner
-    utils.getWinner = jest.fn((p1, p2) => p1)
+    jest.spyOn(utils, 'getWinner')
+    utils.getWinner.mockImplementation((p1, p2) => p1)
     const winner = thumbwar('player1', 'player2')
     console.log(utils.getWinner.mock)
     expect(winner).toBe('player1')
@@ -15,5 +15,5 @@ test('get winner', () => {
         ["player1", "player2"], 
         ["player1", "player2"]
     ])
-    utils.getWinner = originGetWinner
+    utils.getWinner.mockRestore()
 })
