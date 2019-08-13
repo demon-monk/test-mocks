@@ -125,3 +125,34 @@ test('', () => {
     utils.getWinner.mockRest()
 })
 ```
+
+### implement `jest.mock`
+首先我们来实现`mock`函数
+```js
+function mock(path, mockModuleFn) {
+    const mockPath = require.resolve(path)
+    const mockModule = mockModuleFn()
+    Object.keys(mockModule).forEach(key => {
+        mockModule[key].mockRest = () => {
+            delete require.cache[mockPath]
+        }
+    })
+    require.cache[mockPath] = {
+        id: mockPath,
+        filename: mockPath,
+        loaded: true,
+        exports: mockModule
+    }
+}
+```
+
+`mock`函数应该在`require`对应的模块之前执行。因为只有这样，在`require`时才能命中我们已经写好的cache。
+```js
+mock('./utils', () => ({ getWinner: fn(p1, p1) => p1 }))
+// before require('./utils')
+const winner = require('./utils')
+// testing...
+utils.getWinner.mockReset()
+console.log(require('./utils')) // 真正的utilsmodule，不受mock影响
+```
+在jest测试用例中，我们并没有把mock操作放在require操作之前。这是因为jest runner在运行时会帮我们做这一步骤。
