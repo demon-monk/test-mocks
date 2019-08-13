@@ -110,3 +110,18 @@ function fn(impl = () => {}) {
     return mockFn
 }
 ```
+
+## So far. What's the problems
+到目前为止，我们采用的方法本质上还是采用Monkey Patching。 区别仅在于我们使用了jest为我们提供的API。这种方法仅在CommonJS下才能使用。在ESModule中，模块的引入并不是动态的，所以Monkey Patching的方式将不能使用。
+
+## `jest.mock`
+`jest.mock`可以用来mock整个模块。在测试环境下，jest会控制模块系统，因此可以在ESModule中使用。用法如下
+```js
+jest.mock('../utils', () => ({
+    getWinner: jest.fn((p1, p2) => p1)
+}))
+test('', () => {
+    // testing without spyOn
+    utils.getWinner.mockRest()
+})
+```
