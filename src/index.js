@@ -1,6 +1,5 @@
-mock('./utils', () => ({
-    getWinner: fn((p1, p2) => p1)
-}))
+const pathUtils = require('path')
+mock('./utils')
 const assert = require('assert')
 const thumbwar = require('./thumbwar')
 const utils = require('./utils')
@@ -25,17 +24,36 @@ function spyOn(obj, prop) {
 
 function mock(path, mockModuleFn) {
     const utilsPath = require.resolve(path)
-    const mockModule = mockModuleFn()
-    Object.keys(mockModule).forEach(key => {
-        mockModule[key].mockReset = () => {
-            delete require.cache[utilsPath]
+    if (mockModuleFn) {
+        const mockModule = mockModuleFn()
+        Object.keys(mockModule).forEach(key => {
+            mockModule[key].mockReset = () => {
+                delete require.cache[utilsPath]
+            }
+        })
+        require.cache[utilsPath] = {
+            id: utilsPath,
+            filename: utilsPath,
+            loaded: true,
+            exports: mockModule
         }
-    })
-    require.cache[utilsPath] = {
-        id: utilsPath,
-        filename: utilsPath,
-        loaded: true,
-        exports: mockModule
+    } else {
+        const utilsPathArr = utilsPath.split('/')
+        const targetPath = utilsPathArr.slice(0, utilsPathArr.length - 1).join('/')
+        const targetFilename = utilsPathArr.slice(utilsPathArr.length - 1).join('/')
+        const targetMockFile = pathUtils.join(targetPath, '__mocks_self__', targetFilename)
+        const targetModule = require(targetMockFile)
+        Object.keys(targetModule).forEach(key => {
+            targetModule[key].mockReset = () => {
+                delete require.cache[utilsPath]
+            }
+        })
+        require.cache[utilsPath] = {
+            id: utilsPath,
+            filename: utilsPath,
+            loaded: true,
+            exports: targetModule
+        }
     }
 }
 

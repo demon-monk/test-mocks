@@ -171,3 +171,10 @@ module.exports = {
 jest.mock('../utils')
 ```
 即可。
+
+### implement external mock
+首先我们要创建一个`__mocks_self__`文件夹，其功能与jest中`__mocks__`文件夹一样，存放对同级模块的mock数据。
+
+首先为`mock`函数增加一个分支，用来实现未传入mock实现的逻辑。其中我们将`mock`函数中传入的路径取出，找出其对应的mock数据路径（即刚才定义的`__mocks_self__`目录下的同名文件）。然后再`require.cache`中存入mock数据。这样在mock后，在require这个目录拿到的就是mock数据了。
+
+具体实现方式可以参考具体代码。
